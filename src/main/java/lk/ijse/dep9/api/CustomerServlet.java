@@ -41,9 +41,7 @@ public class CustomerServlet extends HTTPServlet2 {
     }
 
     private void getAllCustomers(HttpServletResponse response) throws IOException {
-
-        try {
-            Connection connection = pool.getConnection();
+        try (Connection connection = pool.getConnection()){
             Statement stm = connection.createStatement();
             ResultSet rst = stm.executeQuery("SELECT * FROM Customer");
             ArrayList<CustomerDTO> customerArrayList = new ArrayList<>();
@@ -59,7 +57,6 @@ public class CustomerServlet extends HTTPServlet2 {
             String json = jsonb.toJson(customerArrayList);
             response.setContentType("application/json");
             response.getWriter().println(json);
-
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
