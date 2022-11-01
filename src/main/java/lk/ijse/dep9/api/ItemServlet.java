@@ -11,25 +11,22 @@ import java.io.IOException;
 public class ItemServlet extends HTTPServlet2 {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.getWriter().println("doGet");
+        //response.getWriter().println("doGet");
 
     }
 
     @Override
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.getWriter().println("doPatch");
-
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.getWriter().println("doPost");
-
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.getWriter().println("doDelete");
-
     }
 }

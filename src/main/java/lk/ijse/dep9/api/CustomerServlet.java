@@ -34,7 +34,6 @@ public class CustomerServlet extends HTTPServlet2 {
 
         System.out.println(pathInfo);
         if(pathInfo == null || pathInfo.equals("/")){
-            getAllCustomers(response);
 
         }else{
             getCustomer(request,response,pathInfo);
@@ -87,26 +86,22 @@ public class CustomerServlet extends HTTPServlet2 {
     }
 
     private void getAllCustomers(HttpServletResponse response) throws IOException {
-
-        try {
-            Connection connection = pool.getConnection();
+        try (Connection connection = pool.getConnection()){
             Statement stm = connection.createStatement();
             ResultSet rst = stm.executeQuery("SELECT * FROM Customer");
-
-            ArrayList<CustomerDTO> customerArryaList = new ArrayList<>();
+            ArrayList<CustomerDTO> customerArrayList = new ArrayList<>();
             while(rst.next()){
                 String id = rst.getString("id");
                 String name = rst.getString("name");
                 String address = rst.getString("address");
                 CustomerDTO customerD = new CustomerDTO(id, name, address);
-                customerArryaList.add(customerD);
+                customerArrayList.add(customerD);
             }
             connection.close();
             Jsonb jsonb = JsonbBuilder.create();
-            String json = jsonb.toJson(customerArryaList);
+            String json = jsonb.toJson(customerArrayList);
             response.setContentType("application/json");
             response.getWriter().println(json);
-
         } catch (SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
@@ -115,7 +110,7 @@ public class CustomerServlet extends HTTPServlet2 {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.getWriter().println("doDelete");
+
     }
 
     @Override
@@ -127,4 +122,5 @@ public class CustomerServlet extends HTTPServlet2 {
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.getWriter().println("doPatch");
     }
+
 }
