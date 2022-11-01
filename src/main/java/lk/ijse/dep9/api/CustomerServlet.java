@@ -35,15 +35,6 @@ public class CustomerServlet extends HTTPServlet2 {
         System.out.println(pathInfo);
         if(pathInfo == null || pathInfo.equals("/")){
 
-            String query = request.getParameter("query");
-            String size = request.getParameter("size");
-            String page = request.getParameter("page");
-
-            if(query !=null && size!=null && page !=null){
-
-            }
-
-
         }else {
 
         }
@@ -90,4 +81,5 @@ public class CustomerServlet extends HTTPServlet2 {
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.getWriter().println("doPatch");
     }
+
 }
