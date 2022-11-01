@@ -36,7 +36,8 @@ public class CustomerServlet extends HTTPServlet2 {
         if(pathInfo == null || pathInfo.equals("/")){
             getAllCustomers(response);
 
-        }else {
+        }else if(pathInfo.matches("^/\\d{8}-(\\d{4}-){3}\\d{12}/?$")){
+            response.getWriter().println("work");
 
         }
     }
