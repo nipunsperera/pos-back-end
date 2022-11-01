@@ -36,7 +36,7 @@ public class CustomerServlet extends HTTPServlet2 {
         if(pathInfo == null || pathInfo.equals("/")){
             getAllCustomers(response);
 
-        }else if(pathInfo.matches("^/[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}/?$")){
+        }else{
             getCustomer(request,response,pathInfo);
 
         }
@@ -45,17 +45,38 @@ public class CustomerServlet extends HTTPServlet2 {
     private void getCustomer(HttpServletRequest request, HttpServletResponse response,String path) throws IOException {
 
         try(Connection connection = pool.getConnection()) {
-            PreparedStatement stm = connection.prepareStatement("SELECT * FROM Customer WHERE id=?");
-            Pattern pattern = Pattern.compile("[A-Fa-f0-9]{8}(-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}");
-            Matcher matcher = pattern.matcher(path);
+            if(path.matches("^/[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}/?$")){
+                PreparedStatement stm = connection.prepareStatement("SELECT * FROM Customer WHERE id=?");
+                Pattern pattern = Pattern.compile("[A-Fa-f0-9]{8}(-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}");
+                Matcher matcher = pattern.matcher(path);
 
-            if(matcher.matches()){
-                String group = matcher.group(0);
-                response.getWriter().println(group);
+                if(matcher.find()){
+                    String group = matcher.group(0);
+                    stm.setString(1,group);
+                    ResultSet rst = stm.executeQuery();
+                    if(rst.next()){
+                        String id = rst.getString("id");
+                        String name = rst.getString("name");
+                        String address = rst.getString("address");
+                        CustomerDTO customer = new CustomerDTO(id, name, address);
 
+
+                        Jsonb jsonb = JsonbBuilder.create();
+                        String jsonCustomer = jsonb.toJson(customer);
+
+                        response.setContentType("application/json");
+                        response.getWriter().println(jsonCustomer);
+
+                    }
+                    else{
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    }
+
+                }
             }
+
             else{
-                response.getWriter().println("Not Match");
+                response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
             }
 
 
