@@ -46,18 +46,17 @@ public class CustomerServlet extends HTTPServlet2 {
             Connection connection = pool.getConnection();
             Statement stm = connection.createStatement();
             ResultSet rst = stm.executeQuery("SELECT * FROM Customer");
-
-            ArrayList<CustomerDTO> customerArryaList = new ArrayList<>();
+            ArrayList<CustomerDTO> customerArrayList = new ArrayList<>();
             while(rst.next()){
                 String id = rst.getString("id");
                 String name = rst.getString("name");
                 String address = rst.getString("address");
                 CustomerDTO customerD = new CustomerDTO(id, name, address);
-                customerArryaList.add(customerD);
+                customerArrayList.add(customerD);
             }
             connection.close();
             Jsonb jsonb = JsonbBuilder.create();
-            String json = jsonb.toJson(customerArryaList);
+            String json = jsonb.toJson(customerArrayList);
             response.setContentType("application/json");
             response.getWriter().println(json);
 
