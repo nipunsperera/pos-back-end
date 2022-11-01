@@ -70,7 +70,7 @@ public class CustomerServlet extends HTTPServlet2 {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.getWriter().println("doDelete");
+
     }
 
     @Override
