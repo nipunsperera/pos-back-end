@@ -14,11 +14,11 @@ import lk.ijse.dep9.dto.CustomerDTO;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "customerServlet", urlPatterns = "/customers/*")
 public class CustomerServlet extends HTTPServlet2 {
@@ -35,8 +35,32 @@ public class CustomerServlet extends HTTPServlet2 {
         System.out.println(pathInfo);
         if(pathInfo == null || pathInfo.equals("/")){
 
-        }else {
+        }else if(pathInfo.matches("^/[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}/?$")){
+            getCustomer(request,response,pathInfo);
 
+        }
+    }
+
+    private void getCustomer(HttpServletRequest request, HttpServletResponse response,String path) throws IOException {
+
+        try(Connection connection = pool.getConnection()) {
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM Customer WHERE id=?");
+            Pattern pattern = Pattern.compile("[A-Fa-f0-9]{8}(-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}");
+            Matcher matcher = pattern.matcher(path);
+
+            if(matcher.matches()){
+                String group = matcher.group(0);
+                response.getWriter().println(group);
+
+            }
+            else{
+                response.getWriter().println("Not Match");
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
